@@ -9,8 +9,12 @@ function handleMessage(message) {
     if (parts.length === 3) {
       var hero = parts[1];
       var battleTag = parts[2]
-      getPlayerHeroRank(battleTag, hero).then(function(rank) {
-        bot.reply(message, rank);
+      getPlayerHeroRank(battleTag, hero).then(function(players) {
+        var str = '';
+        players.forEach(function(player) {
+          str+=player.name+' is '+player.rank+' '+hero+'\n'
+        });
+        bot.reply(message, str);
       }).catch(function (error) {
         bot.reply(message, error.message);
       });
