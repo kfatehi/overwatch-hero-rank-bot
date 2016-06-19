@@ -10,11 +10,15 @@ function handleMessage(message) {
       var hero = parts[1];
       var battleTag = parts[2]
       getPlayerHeroRank(battleTag, hero).then(function(players) {
-        var str = '';
-        players.forEach(function(player) {
-          str+=player.name+' is '+player.rank+' '+hero+'\n'
-        });
-        bot.reply(message, str);
+        if (player.length === 0) {
+          bot.reply(message, player.name+' is not a ranked '+hero);
+        } else {
+          var str = '';
+          players.forEach(function(player) {
+            str+=player.name+' is '+player.rank+' '+hero+'\n'
+          });
+          bot.reply(message, str);
+        }
       }).catch(function (error) {
         bot.reply(message, error.message);
       });
