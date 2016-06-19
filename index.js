@@ -22,12 +22,24 @@ function handleMessage(message) {
       bot.reply(message, "FORMAT: !rank <hero> <battletag>")
     }
   }
+
+  if (parts[0] === '!herobot rename') {
+    var name = parts.slice(2, parts.length);
+
+    console.log(name);
+  }
 };
 
 var bot = new Discord.Client();
 
 bot.on("ready", function() {
 	console.log('Ready to begin! Serving in '+bot.channels.length+' channels');
+  // http://discordjs.readthedocs.io/en/latest/docs_client.html#updatedetails-details-callback
+  bot.updateDetails({
+    username: "Hero Bot"
+  }, function(err) {
+    if (err) throw err;
+  });
 });
 
 bot.on("message", handleMessage)
