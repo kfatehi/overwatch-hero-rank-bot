@@ -29,7 +29,7 @@ function getPlayerHeroRank(name, hero) {
     'd.va': 22,
     'dva': 22,
   }
-  var heroId = HERO_MAP[hero];
+  var heroId = HERO_MAP[hero.toLowerCase()];
   var url = 'http://masteroverwatch.com/leaderboards/pc/us/hero/'+heroId+'/role/overall/score/search?name='+name;
   return axios.get(url).then(function (response) {
     var status = response.data.status;

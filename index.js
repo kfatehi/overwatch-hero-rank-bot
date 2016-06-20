@@ -10,8 +10,8 @@ function handleMessage(message) {
       var hero = parts[1];
       var battleTag = parts[2]
       getPlayerHeroRank(battleTag, hero).then(function(players) {
-        if (player.length === 0) {
-          bot.reply(message, player.name+' is not a ranked '+hero);
+        if (players.length === 0) {
+          bot.reply(message, battleTag+' is not a ranked '+hero);
         } else {
           var str = '';
           players.forEach(function(player) {
@@ -20,7 +20,7 @@ function handleMessage(message) {
           bot.reply(message, str);
         }
       }).catch(function (error) {
-        bot.reply(message, error.message);
+        bot.reply(message, error.stack);
       });
     } else {
       bot.reply(message, "FORMAT: !rank <hero> <battletag>")
