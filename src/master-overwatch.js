@@ -1,5 +1,6 @@
 var axios = require('axios');
 var cheerio = require('cheerio');
+var URLROOT = 'http://masteroverwatch.com';
 
 function getPlayerHeroRank(name, hero) {
   var HERO_MAP = {
@@ -30,7 +31,7 @@ function getPlayerHeroRank(name, hero) {
     'dva': 22,
   }
   var heroId = HERO_MAP[hero.toLowerCase()];
-  var url = 'http://masteroverwatch.com/leaderboards/pc/us/hero/'+heroId+'/role/overall/score/search?name='+name;
+  var url = URLROOT+'/leaderboards/pc/us/hero/'+heroId+'/role/overall/score/search?name='+name;
   return axios.get(url).then(function (response) {
     var status = response.data.status;
     if (status === 'error') {
@@ -44,7 +45,33 @@ function getPlayerHeroRank(name, hero) {
         var $ = cheerio.load(html);
         return {
           name: $('.table-icon strong span').text().trim(),
-          rank: $('.table-icon-rank').text()
+          rank: $('.table-icon-rank').text(),
+          url: URLROOT+$('a.table-row-link').attr('href')
+        }
+      });
+    } else {
+      throw new Error('Unhandled status: '+status);
+    }
+  })
+}
+
+function getPlayerRank(name) {
+  var url = URLROOT+'/leaderboards/pc/us/hero/overall/role/overall/score/search?name='+name;
+  return axios.get(url).then(function (response) {
+    var status = response.data.status;
+    if (status === 'error') {
+      var message = response.data.message;
+      throw new Error(message);
+    } else if (status === 'success') {
+      var entries = response.data.entries;
+      // entries is a list of html strings
+      // containing players and some stats
+      return entries.map(function(html) {
+        var $ = cheerio.load(html);
+        return {
+          name: $('.table-icon strong span').text().trim(),
+          rank: $('.table-icon-rank').text(),
+          url: URLROOT+$('a.table-row-link').attr('href')
         }
       });
     } else {
@@ -54,6 +81,7 @@ function getPlayerHeroRank(name, hero) {
 }
 
 module.exports = {
+  getPlayerRank: getPlayerRank, 
   getPlayerHeroRank: getPlayerHeroRank
 }
 
